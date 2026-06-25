@@ -142,6 +142,11 @@ With the README I also publish these samples, which include a list-specified hea
     (setq nice-org-html-options '(:layout "compact" :collapsing t))
   #+end_src
 
++ These variables are global only:
+  - ~nice-org-html-embed-images~: defaults to nil; if non-nil, embeds a base 64 encoding of images in the exported html, so that outputs for files with images are self-contained.
+
+    This is especially useful for sharing notes and presentations with colleages, as self-contained web pages generated from org docs.
+
 ** Publishing
 + This package is particularly well-suited to /publishing/ Org /projects/, as websites comprised of many linked pages. The included publishing function, ~nice-org-html-publish-to-html~, relies on global values for all of the above variables. To use it, in specifying the value of ~org-publish-projects-alist~, for a given project just specify:
 

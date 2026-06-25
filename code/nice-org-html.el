@@ -732,6 +732,43 @@ OPTIONS shadows `nice-org-html-options'."
   (if nice-org-html-mode (nice-org-html--setup) (nice-org-html--teardown)))
 
 ;;==============================================================================
+(defvar nice-org-html-embed-images nil
+  "If non-nil, embed base-64-encoded images in exported html.")
+
+(defun nice-org-html--base-64-encode-file (file)
+  "Base 64 encode contents of file."
+  (base64-encode-string
+   (with-temp-buffer (insert-file-contents file) (buffer-string))))
+
+(defun nice-org-html--format-image (src atts info)
+  "Override for `org-html--format-image' that embeds base64-encoded image."
+  (org-html-close-tag
+   "img"
+   (org-html--make-attribute-string
+    (org-combine-plists
+     (list :src (format "data:image/png;base64,%s"
+			(nice-org-html--base-64-encode-file src))
+	   :alt (if (string-match-p
+		     (concat "^" org-preview-latex-image-directory) src)
+		    (org-html-encode-plain-text
+		     (org-find-text-property-in-string 'org-latex-src src))
+		  (file-name-nondirectory src)))
+     (if (string= "svg" (file-name-extension src))
+	 (org-combine-plists '(:class "org-svg") atts '(:fallback nil))
+       atts)))
+   info))
+
+(defun nice-org-html--format-image-wrapper (format-fn &rest args)
+  "Wrap formatting function to provide embedded images option."
+  (if nice-org-html-embed-images
+      (apply #'nice-org-html--format-image args)
+    (apply format-fn args)))
+
+(advice-add 'org-html--format-image
+	    :around
+	    #'nice-org-html--format-image-wrapper)
+
+;;==============================================================================
 ;; These helper functions are derived from Drew Adams' hexrgb.el
 ;; https://www.emacswiki.org/emacs/download/hexrgb.el
 
