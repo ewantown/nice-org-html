@@ -43,8 +43,8 @@ With the README I also publish these samples, which include a list-specified hea
       :hook (org-mode . nice-org-html-mode)
       :config
       (setq nice-org-html-theme-alist
-            '((light . solo-jazz)
-              (dark  . tomorrow-night-eighties)))
+            '((light . tsdh-light)
+              (dark  . tsdh-dark)))
       (setq nice-org-html-default-mode 'dark)
       (setq nice-org-html-headline-bullets nil) 
   #+end_src
