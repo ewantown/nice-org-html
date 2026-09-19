@@ -738,7 +738,12 @@ OPTIONS shadows `nice-org-html-options'."
 (defun nice-org-html--base-64-encode-file (file)
   "Base 64 encode contents of file."
   (base64-encode-string
-   (with-temp-buffer (insert-file-contents file) (buffer-string))))
+   (with-temp-buffer
+     (insert-file-contents
+      (url-unhex-string
+       (url-filename
+	(url-generic-parse-url file))))
+     (buffer-string))))
 
 (defun nice-org-html--format-image (src atts info)
   "Override for `org-html--format-image' that embeds base64-encoded image."
